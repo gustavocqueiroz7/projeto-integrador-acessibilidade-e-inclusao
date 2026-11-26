@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Escola Para Todos: comunidade colaborativa pela acessibilidade escolar.">
+  <meta name="theme-color" content="#104638">
+  <title>Escola Para Todos</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Pular para o conteúdo</a>
+
+  <div id="accessBar" class="access" hidden>
+    <strong>♿ ACESSIBILIDADE</strong>
+    <div class="tools" aria-label="Ferramentas de acessibilidade">
+      <button type="button" data-action="fontDown" aria-label="Diminuir fonte">A−</button>
+      <button type="button" data-action="fontReset" aria-label="Restaurar fonte">A</button>
+      <button type="button" data-action="fontUp" aria-label="Aumentar fonte">A+</button>
+      <button type="button" data-action="contrast" aria-pressed="false">◐ Contraste</button>
+      <button type="button" data-action="gray" aria-pressed="false">◑ Cinza</button>
+      <button type="button" data-action="spacing" aria-pressed="false">↔ Leitura fácil</button>
+    </div>
+  </div>
+
+  <!-- CADASTRO E LOGIN -->
+  <main id="entry" class="entry">
+    <section class="welcome">
+      <div>
+        <div class="brand brand-light">
+          <span class="brandmark" aria-hidden="true">♿</span>
+          <span>Escola Para Todos</span>
+        </div>
+        <p class="eyebrow">ACESSIBILIDADE • PARTICIPAÇÃO • INCLUSÃO</p>
+        <h1>Uma escola acessível começa com a nossa voz.</h1>
+        <p>Um espaço colaborativo para identificar barreiras, registrar necessidades de apoio e acompanhar melhorias na escola.</p>
+      </div>
+      <div class="welcome-bottom">
+        <div class="illustration" aria-hidden="true">🏫 🤝</div>
+        <p class="small">Toda pessoa tem direito de aprender, participar e pertencer.</p>
+      </div>
+    </section>
+
+    <section class="panel entry-panel">
+      <div class="entry-tabs" role="tablist" aria-label="Acesso à plataforma">
+        <button type="button" class="entry-tab active" id="showRegister" role="tab" aria-selected="true" aria-controls="registerPane">Criar cadastro</button>
+        <button type="button" class="entry-tab" id="showLogin" role="tab" aria-selected="false" aria-controls="loginPane">Entrar</button>
+      </div>
+
+      <div id="registerPane" class="entry-pane">
+        <h2>Crie sua conta</h2>
+        <p class="muted small">Seus dados ficam salvos somente neste navegador.</p>
+        <form id="registerForm">
+          <label for="registerName">Seu nome</label>
+          <input id="registerName" autocomplete="name" maxlength="70" placeholder="Como podemos chamar você?" required>
+
+          <label for="registerProfile">Qual é o seu perfil?</label>
+          <select id="registerProfile" required>
+            <option value="">Selecione seu perfil</option>
+            <option>Aluno</option>
+            <option>Pai/Responsável</option>
+            <option>Professor</option>
+            <option>Funcionário</option>
+          </select>
+
+          <label for="registerSchool">Nome da escola</label>
+          <input id="registerSchool" maxlength="100" placeholder="Ex.: Escola Municipal Esperança" required>
+
+          <!-- ESTES CAMPOS SÓ APARECEM PARA ALUNOS -->
+          <div id="registerStudentFields" class="student-fields" hidden>
+            <label for="registerClass">Turma</label>
+            <input id="registerClass" maxlength="60" placeholder="Ex.: 7º ano" required>
+
+            <label for="registerShift">Turno</label>
+            <select id="registerShift" required>
+              <option value="">Selecione o turno</option>
+              <option>Manhã</option>
+              <option>Tarde</option>
+              <option>Noite</option>
+              <option>Integral</option>
+            </select>
+          </div>
+
+          <label for="registerPassword">Crie uma senha</label>
+          <input id="registerPassword" type="password" minlength="4" maxlength="60" autocomplete="new-password" placeholder="Mínimo de 4 caracteres" required>
+
+          <label for="registerPassword2">Confirme sua senha</label>
+          <input id="registerPassword2" type="password" minlength="4" maxlength="60" autocomplete="new-password" placeholder="Digite a senha novamente" required>
+
+          <button class="btn primary full form-submit" type="submit">Finalizar cadastro e acessar →</button>
+        </form>
+        <p class="small muted registration-note">Protótipo escolar: não use senhas pessoais ou reutilizadas. O armazenamento local não oferece segurança de autenticação.</p>
+      </div>
+
+      <div id="loginPane" class="entry-pane" hidden>
+        <h2>Bem-vindo de volta!</h2>
+        <p class="muted small">Entre com os dados cadastrados neste navegador.</p>
+        <form id="loginForm">
+          <label for="loginName">Nome cadastrado</label>
+          <input id="loginName" autocomplete="username" maxlength="70" required>
+
+          <label for="loginPassword">Senha</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" required>
+
+          <button class="btn primary full form-submit" type="submit">Entrar na plataforma →</button>
+        </form>
+
+        <div class="divider"><span>OU</span></div>
+        <details class="admin-login">
+          <summary>Entrada de administrador (demonstração)</summary>
+          <form id="adminLoginForm" class="compact-form">
+            <label for="adminCode">Código demonstrativo</label>
+            <input id="adminCode" type="password" autocomplete="off" placeholder="Código de demonstração" required>
+            <button class="btn secondary full" type="submit">Entrar como administrador</button>
+          </form>
+          <p class="small muted">O código fica visível no JavaScript do projeto. Portanto, esta função não protege dados reais.</p>
+        </details>
+      </div>
+
+      <p id="entryMessage" class="form-message" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <!-- APLICAÇÃO PRINCIPAL -->
+  <div id="app" class="app" hidden>
+    <header class="topnav">
+      <a class="brand" href="#" data-goto="home" aria-label="Escola Para Todos - Início">
+        <span class="brandmark" aria-hidden="true">♿</span>
+        <span>Escola Para Todos</span>
+      </a>
+
+      <nav class="navlinks" aria-label="Navegação principal">
+        <button class="active" type="button" data-tab="home">Início</button>
+        <button type="button" data-tab="barriers">Barreiras</button>
+        <button type="button" data-tab="professionals">Profissionais</button>
+        <button type="button" data-tab="rights">Guia de direitos</button>
+        <button type="button" data-tab="profile">Meu perfil</button>
+        <button type="button" data-tab="admin" id="adminNav" hidden>Administração</button>
+      </nav>
+
+      <div class="user-area">
+        <span class="userpill" id="who">Participante</span>
+        <button class="btn outline btn-small" id="logout" type="button">Sair</button>
+      </div>
+    </header>
+
+    <main id="mainContent" class="content">
+      <section id="home" class="section active">
+        <div class="hero">
+          <div>
+            <p class="eyebrow light-eyebrow">NOSSA COMUNIDADE, NOSSA ESCOLA</p>
+            <h1>Uma escola melhor para todos! 💚</h1>
+            <p>Identifique barreiras, fortaleça demandas e acompanhe as mudanças.</p>
+            <p class="hero-school" id="schoolLabel"></p>
+          </div>
+          <button class="btn hero-button" type="button" data-goto="newreport">＋ Registrar problema</button>
+        </div>
+
+        <div class="stats">
+          <article class="stat"><div class="caption">Demandas registradas</div><div class="num" id="total">0</div><div class="caption">Problemas identificados</div></article>
+          <article class="stat"><div class="caption">Apoios recebidos</div><div class="num" id="votes">0</div><div class="caption">Vozes da comunidade</div></article>
+          <article class="stat"><div class="caption">Em andamento</div><div class="num" id="working">0</div><div class="caption">Demandas acompanhadas</div></article>
+          <article class="stat"><div class="caption">Resolvidas</div><div class="num" id="done">0</div><div class="caption">Conquistas coletivas</div></article>
+        </div>
+
+        <div class="sectionhead">
+          <div>
+            <h2>Demandas da comunidade</h2>
+            <p class="muted small">As necessidades mais apoiadas ganham destaque.</p>
+          </div>
+          <button class="btn primary" type="button" data-goto="newreport">＋ Nova demanda</button>
+        </div>
+
+        <div class="home-insights">
+          <article class="insight">
+            <span class="insight-icon" aria-hidden="true">🤝</span>
+            <strong>Participação colaborativa</strong>
+            <p>Ajude a comunidade a priorizar melhorias e acompanhar cada demanda.</p>
+            <button class="btn secondary" type="button" data-goto="barriers">Ver barreiras</button>
+          </article>
+          <article class="insight">
+            <span class="insight-icon" aria-hidden="true">📈</span>
+            <strong>Transparência</strong>
+            <p>Acompanhe o andamento e as mudanças registradas pela comunidade.</p>
+            <button class="btn secondary" type="button" data-goto="barriers">Acompanhar demandas</button>
+          </article>
+        </div>
+
+        <div id="homeDemands" class="cards"></div>
+        <div class="rightscard"><strong>💡 Sua participação importa!</strong><br>Antes de criar um novo relato, confira se o problema já foi registrado. Você pode apoiar uma demanda existente.</div>
+      </section>
+
+      <section id="barriers" class="section">
+        <div class="sectionhead">
+          <div>
+            <h2>🧱 Mapeamento de barreiras</h2>
+            <p class="muted small">Problemas de infraestrutura e acessibilidade da escola.</p>
+          </div>
+          <button class="btn primary" type="button" data-goto="newreport">＋ Registrar barreira</button>
+        </div>
+
+        <section class="map-panel" aria-labelledby="mapTitle">
+          <div class="sectionhead compact-head">
+            <div>
+              <h3 id="mapTitle">🗺️ Mapa esquemático da escola</h3>
+              <p class="small muted">Selecione um setor para filtrar os relatos. Este desenho é ilustrativo, não uma planta oficial.</p>
+            </div>
+            <button type="button" class="btn outline btn-small" data-map-sector="">Limpar seleção</button>
+          </div>
+
+          <div class="school-map" role="group" aria-label="Setores ilustrativos da escola">
+            <button type="button" class="map-zone" data-map-sector="Entrada"><span>🚪</span><strong>Entrada</strong><small id="mapCountEntrada">0 relatos</small></button>
+            <button type="button" class="map-zone" data-map-sector="Pátio"><span>🌳</span><strong>Pátio</strong><small id="mapCountPátio">0 relatos</small></button>
+            <button type="button" class="map-zone" data-map-sector="Salas de aula"><span>📚</span><strong>Salas de aula</strong><small id="mapCountSalas">0 relatos</small></button>
+            <button type="button" class="map-zone" data-map-sector="Banheiros"><span>🚻</span><strong>Banheiros</strong><small id="mapCountBanheiros">0 relatos</small></button>
+            <button type="button" class="map-zone" data-map-sector="Biblioteca"><span>📖</span><strong>Biblioteca</strong><small id="mapCountBiblioteca">0 relatos</small></button>
+            <button type="button" class="map-zone" data-map-sector="Outros"><span>🏫</span><strong>Outros</strong><small id="mapCountOutros">0 relatos</small></button>
+          </div>
+          <p id="mapSelection" class="small muted" aria-live="polite">Nenhum setor selecionado.</p>
+        </section>
+
+        <div class="filters">
+          <input id="searchReports" type="search" placeholder="🔎 Buscar por descrição, local ou tipo..." aria-label="Buscar barreiras">
+          <select id="sortReports" aria-label="Ordenar barreiras">
+            <option value="votes">Mais apoiadas</option>
+            <option value="priority">Prioridade</option>
+            <option value="recent">Mais recentes</option>
+          </select>
+          <select id="filterSector" aria-label="Filtrar por setor">
+            <option value="">Todos os setores</option>
+            <option>Entrada</option>
+            <option>Pátio</option>
+            <option>Salas de aula</option>
+            <option>Banheiros</option>
+            <option>Biblioteca</option>
+            <option>Outros</option>
+          </select>
+          <select id="filterStatus" aria-label="Filtrar por status">
+            <option value="">Todos os status</option>
+            <option>Reportado</option>
+            <option>Em andamento</option>
+            <option>Resolvido</option>
+          </select>
+        </div>
+        <div id="allDemands" class="cards"></div>
+      </section>
+
+      <section id="newreport" class="section">
+        <div class="sectionhead">
+          <div>
+            <h2>📝 Registrar uma nova demanda</h2>
+            <p class="muted small">Descreva a barreira que precisa ser superada.</p>
+          </div>
+        </div>
+
+        <div class="formcard">
+          <form id="reportForm">
+            <div class="formgrid">
+              <div>
+                <label for="sector">Setor da escola *</label>
+                <select id="sector" required>
+                  <option value="">Escolha</option>
+                  <option>Entrada</option>
+                  <option>Pátio</option>
+                  <option>Salas de aula</option>
+                  <option>Banheiros</option>
+                  <option>Biblioteca</option>
+                  <option>Outros</option>
+                </select>
+              </div>
+              <div>
+                <label for="kind">Tipo de barreira *</label>
+                <select id="kind" required>
+                  <option value="">Escolha</option>
+                  <option>Falta de rampa</option>
+                  <option>Banheiro não adaptado</option>
+                  <option>Ausência de piso tátil</option>
+                  <option>Falta de elevador</option>
+                  <option>Portas e corredores estreitos</option>
+                  <option>Falta de sinalização acessível</option>
+                  <option>Falta de recurso de comunicação</option>
+                  <option>Outro problema estrutural</option>
+                </select>
+              </div>
+              <div class="wide">
+                <label for="description">Descreva o problema *</label>
+                <textarea id="description" maxlength="1200" required placeholder="Conte o que acontece, onde ocorre e por que a mudança é necessária. Evite citar nomes ou dados de estudantes."></textarea>
+              </div>
+              <div class="wide">
+                <label for="photo">Foto da barreira (opcional)</label>
+                <input type="file" id="photo" accept="image/*">
+                <span class="small muted">Evite fotografar rostos, documentos ou dados pessoais. A imagem será reduzida para caber no armazenamento local.</span>
+              </div>
+              <div class="wide">
+                <label for="altText">Descrição da imagem (texto alternativo)</label>
+                <input id="altText" maxlength="180" placeholder="Ex.: Degrau alto na entrada, sem rampa de acesso.">
+              </div>
+              <div class="wide">
+                <label for="locationDetail">Localização mais específica (opcional)</label>
+                <input id="locationDetail" maxlength="120" placeholder="Ex.: Entrada lateral, próximo à quadra">
+              </div>
+              <div class="wide checkbox-line">
+                <input type="checkbox" id="anonymousReport">
+                <label for="anonymousReport">Publicar este relato anonimamente (seu nome não aparecerá no relato)</label>
+              </div>
+            </div>
+
+            <p class="small muted">* Campos obrigatórios. O anonimato oculta seu nome na publicação, mas o relato continua associado à sua conta neste navegador para que você possa acompanhá-lo.</p>
+            <button class="btn primary" type="submit">Enviar demanda</button>
+            <button class="btn outline" type="button" data-goto="barriers">Cancelar</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="professionals" class="section">
+        <div class="sectionhead">
+          <div>
+            <h2>🧑‍🏫 Necessidade de profissionais de apoio</h2>
+            <p class="muted small">Registre a necessidade de profissionais por turno e turma, sem expor dados pessoais.</p>
+          </div>
+        </div>
+
+        <div class="formcard">
+          <form id="supportForm">
+            <div class="formgrid">
+              <div>
+                <label for="professional">Profissional necessário *</label>
+                <select id="professional" required>
+                  <option value="">Selecione</option>
+                  <option>Intérprete de Libras</option>
+                  <option>Cuidador(a)</option>
+                  <option>Profissional de apoio escolar</option>
+                  <option>Auxiliar de sala</option>
+                  <option>Psicopedagogo(a)</option>
+                  <option>Outro profissional de apoio</option>
+                </select>
+              </div>
+              <div>
+                <label for="shift">Turno *</label>
+                <select id="shift" required>
+                  <option value="">Selecione</option>
+                  <option>Manhã</option>
+                  <option>Tarde</option>
+                  <option>Noite</option>
+                  <option>Integral</option>
+                </select>
+              </div>
+              <div>
+                <label for="supportClass">Turma (opcional)</label>
+                <input id="supportClass" maxlength="60" placeholder="Ex.: 8º ano A">
+              </div>
+              <div>
+                <label for="needLevel">Nível de necessidade *</label>
+                <select id="needLevel" required>
+                  <option value="">Selecione</option>
+                  <option>Urgente</option>
+                  <option>Alta</option>
+                  <option>Moderada</option>
+                </select>
+              </div>
+              <div class="wide">
+                <label for="supportDesc">Explique a necessidade</label>
+                <textarea id="supportDesc" maxlength="900" placeholder="Descreva a ausência ou insuficiência de apoio, sem expor informações pessoais."></textarea>
+              </div>
+              <div class="wide checkbox-line">
+                <input type="checkbox" id="anonymousSupport">
+                <label for="anonymousSupport">Registrar esta necessidade anonimamente</label>
+              </div>
+            </div>
+            <button class="btn primary" type="submit">Registrar necessidade</button>
+          </form>
+        </div>
+
+        <div class="sectionhead">
+          <div>
+            <h2>Panorama de necessidades</h2>
+            <p class="muted small">Demandas profissionais registradas pela comunidade.</p>
+          </div>
+        </div>
+        <div id="supportList" class="cards"></div>
+      </section>
+
+      <section id="rights" class="section">
+        <div class="sectionhead">
+          <div>
+            <h2>⚖️ Guia de direitos: educação inclusiva</h2>
+            <p class="muted small">Conheça alguns direitos previstos na legislação brasileira.</p>
+          </div>
+        </div>
+
+        <article class="demand rights-intro">
+          <h3>Lei Brasileira de Inclusão — Lei nº 13.146/2015</h3>
+          <p>A Lei Brasileira de Inclusão da Pessoa com Deficiência assegura condições de igualdade, participação e aprendizagem, sem discriminação, inclusive no ambiente escolar.</p>
+          <span class="tag resolved">Direito à inclusão</span>
+        </article>
+
+        <div class="cards rights-cards">
+          <article class="demand">
+            <h3>♿ Acessibilidade física</h3>
+            <p>O ambiente escolar deve oferecer acessibilidade arquitetônica, com condições adequadas de circulação, acesso e utilização dos espaços.</p>
+          </article>
+          <article class="demand">
+            <h3>🤝 Profissionais de apoio</h3>
+            <p>A legislação prevê oferta de profissionais de apoio escolar, quando necessários, e recursos de acessibilidade, conforme as necessidades dos estudantes.</p>
+          </article>
+          <article class="demand">
+            <h3>📚 Educação sem discriminação</h3>
+            <p>É assegurado um sistema educacional inclusivo em todos os níveis e aprendizado ao longo da vida, em igualdade de oportunidades.</p>
+          </article>
+          <article class="demand">
+            <h3>🗣️ Comunicação acessível</h3>
+            <p>Recursos de comunicação e tecnologia assistiva devem contribuir para a participação e autonomia dos estudantes.</p>
+          </article>
+        </div>
+
+        <div class="rightscard">
+          <strong>Onde consultar?</strong><br>
+          Lei nº 13.146/2015, especialmente artigos 27 e 28.<br>
+          <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13146.htm" target="_blank" rel="noopener noreferrer">Consultar texto oficial no Planalto</a>.
+        </div>
+      </section>
+
+      <section id="profile" class="section">
+        <div class="sectionhead">
+          <div>
+            <h2>👤 Meu perfil</h2>
+            <p class="muted small">Confira seus dados e acompanhe sua participação.</p>
+          </div>
+          <button class="btn secondary" type="button" data-goto="home">Voltar ao início</button>
+        </div>
+
+        <div class="profile-layout">
+          <article class="profile-card">
+            <div class="profile-avatar" id="profileAvatar">EP</div>
+            <h3 id="profileNameHeading">Seu nome</h3>
+            <p class="muted" id="profileRoleHeading">Perfil</p>
+            <div class="profile-details" id="profileSummary"></div>
+          </article>
+
+          <article class="formcard profile-edit-card">
+            <h3>Editar informações</h3>
+            <form id="profileForm" class="profile-form">
+              <label for="profileNameEdit">Nome</label>
+              <input id="profileNameEdit" maxlength="70" required>
+
+              <label for="profileRoleEdit">Perfil</label>
+              <select id="profileRoleEdit" required>
+                <option>Aluno</option>
+                <option>Pai/Responsável</option>
+                <option>Professor</option>
+                <option>Funcionário</option>
+              </select>
+
+              <label for="profileSchoolEdit">Escola</label>
+              <input id="profileSchoolEdit" maxlength="100" required>
+
+              <!-- ESTES CAMPOS SÓ APARECEM PARA ALUNOS -->
+              <div id="profileStudentFields" class="student-fields" hidden>
+                <label for="profileClassEdit">Turma</label>
+                <input id="profileClassEdit" maxlength="60" placeholder="Ex.: 7º ano">
+
+                <label for="profileShiftEdit">Turno</label>
+                <select id="profileShiftEdit">
+                  <option value="">Selecione o turno</option>
+                  <option>Manhã</option>
+                  <option>Tarde</option>
+                  <option>Noite</option>
+                  <option>Integral</option>
+                </select>
+              </div>
+
+              <button class="btn primary" type="submit">Salvar alterações</button>
+              <p class="small muted">As alterações ficam salvas neste navegador.</p>
+            </form>
+          </article>
+        </div>
+
+        <div class="sectionhead profile-reports-head">
+          <div>
+            <h3>Minhas demandas</h3>
+            <p class="muted small">Relatos e necessidades associados à sua conta.</p>
+          </div>
+        </div>
+        <div id="myReports" class="cards"></div>
+      </section>
+
+      <section id="admin" class="section">
+        <div class="sectionhead">
+          <div>
+            <h2>🛡️ Administração demonstrativa</h2>
+            <p class="muted small">Ferramentas locais para revisar relatos e atualizar o andamento.</p>
+          </div>
+        </div>
+
+        <div class="rightscard warning-card">
+          <strong>Importante:</strong> este painel é apenas demonstrativo. Como o projeto não usa servidor, qualquer pessoa com acesso ao código ou ao navegador pode contornar as permissões.
+        </div>
+
+        <div class="stats admin-stats">
+          <article class="stat"><div class="caption">Contas neste navegador</div><div class="num" id="adminUsers">0</div></article>
+          <article class="stat"><div class="caption">Relatos</div><div class="num" id="adminReports">0</div></article>
+          <article class="stat"><div class="caption">Necessidades de apoio</div><div class="num" id="adminSupports">0</div></article>
+        </div>
+
+        <div class="sectionhead">
+          <div><h3>Relatos para moderação</h3></div>
+        </div>
+        <div id="adminDemandList" class="cards"></div>
+      </section>
+
+      <section class="mobilization">
+        <div>
+          <h2>📣 Transparência e mobilização</h2>
+          <p class="muted small">Transforme os registros em uma reivindicação coletiva.</p>
+        </div>
+        <button class="btn primary" id="generate" type="button">📄 Gerar ofício / abaixo-assinado</button>
+      </section>
+
+      <footer class="footer">Escola Para Todos · Acessibilidade é um direito, não um privilégio.<br>Protótipo escolar · Os dados ficam salvos localmente neste navegador.</footer>
+    </main>
+  </div>
+
+  <!-- WIDGET OFICIAL VLibras: REQUER INTERNET -->
+  <div vw class="enabled vlibras-widget" aria-label="Tradutor VLibras">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    window.addEventListener("load", function () {
+      if (window.VLibras && window.VLibras.Widget) {
+        new window.VLibras.Widget("https://vlibras.gov.br/app");
+      }
+    });
+  </script>
+
+  <!-- MODAL DE DOCUMENTO -->
+  <div class="modal" id="docModal" role="dialog" aria-modal="true" aria-labelledby="docTitle" aria-hidden="true">
+    <div class="modalbox">
+      <div class="modalhead">
+        <h2 id="docTitle">Documento de reivindicação</h2>
+        <button type="button" class="btn outline btn-small" id="closeModal" aria-label="Fechar">✕</button>
+      </div>
+      <p class="small muted">Revise e complete os dados antes de encaminhar.</p>
+      <textarea id="documentText" aria-label="Texto do ofício ou abaixo-assinado"></textarea>
+      <div class="actions">
+        <button class="btn primary" id="printDoc" type="button">🖨️ Imprimir / salvar PDF</button>
+        <button class="btn secondary" id="copyDoc" type="button">Copiar texto</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
